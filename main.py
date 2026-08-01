@@ -10,6 +10,8 @@ from nodes.generator import GenerateAnswerNode
 from nodes.reflection import ReflectionNode
 from nodes.cache_writer import CacheWriterNode
 
+from services.calendar_service import CalendarService
+from tools.calendar_tool import CalendarTool
 from tools.rag_tool import RagTool
 
 from services.embeddings import EmbeddingService
@@ -30,9 +32,12 @@ semantic_cache_node = SemanticCacheNode(
     semantic_cache_service
 )
 planner_node = PlannerNode(llm)
+calendar_service = CalendarService()
+calendar_tool = CalendarTool(calendar_service)
 tool_router_node = ToolRouterNode(
     {
-        "rag": rag_tool
+        "rag": rag_tool,
+        "calendar": calendar_tool
     }
 )
 
