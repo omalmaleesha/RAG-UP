@@ -9,3 +9,16 @@ wheels/
 # Virtual environments
 .venv
 .env
+
+# Ignore all files inside ChromaDB directories
+database/semantic_cache/**
+database/vector_db/**
+
+# Keep the directories themselves
+!database/
+!database/semantic_cache/
+!database/vector_db/
+
+# Keep an empty placeholder file so Git tracks the folders
+!database/semantic_cache/.gitkeep
+!database/vector_db/.gitkeep
