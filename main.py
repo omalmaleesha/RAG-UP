@@ -37,7 +37,7 @@ tool_router_node = ToolRouterNode(
 )
 
 generate_answer_node = GenerateAnswerNode(llm)
-reflection_node = ReflectionNode(llm)
+reflection_node = ReflectionNode()
 cache_writer_node = CacheWriterNode(
     semantic_cache_service
 )

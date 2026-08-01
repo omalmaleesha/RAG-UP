@@ -6,7 +6,10 @@
 
 # services/semantic_cache_service.py
 
+import time
 from typing import List
+
+from opentelemetry import metrics
 
 from ragAiAgent import RagAiAgentState
 
@@ -44,6 +47,8 @@ class CacheWriterNode:
         self.semantic_cache_service = semantic_cache_service
 
     def __call__(self, state: RagAiAgentState) -> Dict:
+        
+        start = time.perf_counter()
 
         question = state["user_query"]
         answer = state["final_answer"]
@@ -55,4 +60,10 @@ class CacheWriterNode:
             answer=answer
         )
 
-        return {}
+        elapsed = time.perf_counter() - start
+        metrics = state.get("metrics", {})
+        metrics["cache_writer"] = elapsed
+
+        return {
+            "metrics": metrics
+        }

@@ -2,6 +2,7 @@
 # Search semantic cache
 # Decide cache hit
 
+import time
 from typing import Dict
 
 from ragAiAgent import RagAiAgentState
@@ -22,6 +23,7 @@ class SemanticCacheNode:
         self.similarity_threshold = similarity_threshold
 
     def __call__(self, state: RagAiAgentState) -> Dict:
+        start = time.perf_counter()
         print(">>> SemanticCacheNode")
 
         query = state["user_query"]
@@ -35,9 +37,14 @@ class SemanticCacheNode:
 
         if not cache_result:
 
+            elapsed = time.perf_counter() - start
+            metrics = state.get("metrics", {})
+            metrics["semantic_cache"] = elapsed
+
             return {
                 "cache_hit": False,
-                "cached_answer": None
+                "cached_answer": None,
+                "metrics": metrics
             }
 
         best_match = cache_result[0]
@@ -48,13 +55,24 @@ class SemanticCacheNode:
 
             print(f"Best match: {best_match}")
 
+            elapsed = time.perf_counter() - start
+            metrics = state.get("metrics", {})
+            metrics["semantic_cache"] = elapsed
+
             return {
                 "cache_hit": True,
                 "cached_answer": best_match["answer"],
-                "final_answer": best_match["answer"]
+                "final_answer": best_match["answer"],
+                "metrics": metrics
             }
+
+        elapsed = time.perf_counter() - start
+        metrics = state.get("metrics", {})
+        metrics["semantic_cache"] = elapsed
+        
 
         return {
             "cache_hit": False,
-            "cached_answer": None
+            "cached_answer": None,
+            "metrics": metrics
         }

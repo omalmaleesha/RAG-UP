@@ -2,6 +2,7 @@
 # Load summary
 # Update state
 
+import time
 from typing import Dict
 from ragAiAgent import RagAiAgentState
 
@@ -9,6 +10,8 @@ from ragAiAgent import RagAiAgentState
 class ConversationMemoryNode:
 
     def __call__(self, state: RagAiAgentState) -> Dict:
+        start = time.perf_counter()
+
         print(">>> ConversationMemoryNode")
         messages = state.get("messages", [])
 
@@ -21,6 +24,10 @@ class ConversationMemoryNode:
                 f"{msg.type}: {msg.content}"
                 for msg in messages[:-1]
             )
+
+        elapsed = time.perf_counter() - start
+        metrics = state.get("metrics", {})
         return {
-            "conversation_memory": memory
+            "conversation_memory": memory,
+            "metrics": metrics
         }

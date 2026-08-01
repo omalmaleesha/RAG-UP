@@ -1,3 +1,5 @@
+import time
+from tracemalloc import start
 from typing import Annotated, Optional, TypedDict, List, Dict, Any
 from langchain_core.messages import BaseMessage
 from langgraph.graph.message import add_messages
@@ -18,6 +20,12 @@ class RagAiAgentState(TypedDict):
     final_answer: Optional[str]
     reflection_passed: bool
 
+    #find speeed
+    metrics: Dict[str, float]
+    total_time: float
+    llm_calls: int
+    cache_hit: bool
+
 
 def semantic_cache_router(state: RagAiAgentState):
 
@@ -36,10 +44,12 @@ def planner_router(state: RagAiAgentState):
 
 def reflection_router(state: RagAiAgentState):
 
-    if state["reflection_passed"]:
-        return "cache_writer"
+    # if state["reflection_passed"]:
+    #     return "cache_writer"
 
-    return "planner"
+    # return "planner"
+
+    return "cache_writer"
 
 
 class RagAiGraph:
@@ -123,14 +133,14 @@ class RagAiGraph:
             },
         )
 
-        workflow.add_conditional_edges(
-            "reflection",
-            reflection_router,
-            {
-                "planner": "planner",
-                "cache_writer": "cache_writer",
-            },
-        )
+        # workflow.add_conditional_edges(
+        #     "reflection",
+        #     reflection_router,
+        #     {
+        #         #"planner": "planner",
+        #         "cache_writer": "cache_writer",
+        #     },
+        # )
 
         self.graph = workflow.compile()
 
@@ -138,12 +148,14 @@ class RagAiGraph:
     def run(self):
         user_input = ""
 
-        while (user_input.lower() not in ["exit", "quit"]):
+        while user_input.lower() not in ["exit", "quit"]:
 
             user_input = input("You: ")
 
             if user_input.lower() in ["exit", "quit"]:
-                    break
+                break
+
+            start = time.perf_counter()
 
             result = self.graph.invoke(
                 {
@@ -159,7 +171,35 @@ class RagAiGraph:
                     "enough_information": False,
                     "final_answer": None,
                     "reflection_passed": False,
+                    "metrics": {},
+                    "total_time": 0,
+                    "llm_calls": 0,
                 }
             )
 
+            result["total_time"] = time.perf_counter() - start
+
             print("\nAI:", result["final_answer"])
+
+            PerformanceReporter.print(result)
+
+
+
+class PerformanceReporter:
+
+    @staticmethod
+    def print(result):
+
+        print("\n================ PERFORMANCE ================")
+
+        print(f"Cache Hit : {result['cache_hit']}")
+        print(f"Tool      : {result['selected_tool']}")
+
+        print()
+
+        for node, t in result["metrics"].items():
+
+            print(f"{node:25} {t:.3f}s")
+
+        print("--------------------------------------------")
+        print(f"Total : {result['total_time']:.3f}s")

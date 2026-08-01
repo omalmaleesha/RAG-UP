@@ -20,6 +20,7 @@ Question:
 {question}
 """
 
+import time
 from typing import Dict
 
 from langchain_core.prompts import ChatPromptTemplate
@@ -36,6 +37,7 @@ class GenerateAnswerNode:
         )
 
     def __call__(self, state: RagAiAgentState) -> Dict:
+        start = time.perf_counter()
 
         print(">>> GenerateAnswerNode")
 
@@ -50,7 +52,12 @@ class GenerateAnswerNode:
                 "context": documents
             }
         )
+        elapsed = time.perf_counter() - start
+
+        metrics = state.get("metrics", {})
+        metrics["generate_answer"] = elapsed
 
         return {
-            "final_answer": response.content
+            "final_answer": response.content,
+            "metrics": metrics
         }

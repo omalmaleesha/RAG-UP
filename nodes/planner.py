@@ -7,6 +7,8 @@
 
 
 # planner_schema.py
+import time
+
 from pydantic import BaseModel
 from typing import Literal, Dict
 
@@ -63,6 +65,7 @@ class PlannerNode:
         )
 
     def __call__(self, state: RagAiAgentState) -> Dict:
+        start = time.perf_counter()
 
         print(">>> PlannerNode")
 
@@ -73,8 +76,13 @@ class PlannerNode:
                 "has_tool_results": len(state["tool_results"]) > 0,
             }
         )
+        elapsed = time.perf_counter() - start
+        metrics = state.get("metrics", {})
+        metrics["planner"] = elapsed
+
 
         return {
             "selected_tool": result.selected_tool,
             "enough_information": result.enough_information,
+            "metrics": metrics
         }
