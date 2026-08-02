@@ -9,6 +9,7 @@ from nodes.tool_router import ToolRouterNode
 from nodes.generator import GenerateAnswerNode
 from nodes.reflection import ReflectionNode
 from nodes.cache_writer import CacheWriterNode
+from nodes.route_after_cache import route_after_cache
 
 from services.calendar_service import CalendarService
 from tools.calendar_tool import CalendarTool
@@ -57,7 +58,8 @@ def main():
     generate_answer_node,
     reflection_node,
     cache_writer_node,
-)
+    route_after_cache
+    )
     graph.run()
 
 

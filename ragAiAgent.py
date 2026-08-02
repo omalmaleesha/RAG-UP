@@ -32,7 +32,7 @@ def semantic_cache_router(state: RagAiAgentState):
     if state["cache_hit"]:
         return "end"
 
-    return "planner"
+    return "miss"
 
 
 def planner_router(state: RagAiAgentState):
@@ -63,6 +63,7 @@ class RagAiGraph:
         generate_answer_node,
         reflection_node,
         cache_writer_node,
+        route_after_cache
     ):
 
         workflow = StateGraph(RagAiAgentState)
@@ -70,6 +71,7 @@ class RagAiGraph:
             "conversation_memory",
             conversation_memory_node
         )
+        workflow.add_node("route_after_cache", route_after_cache)
         workflow.add_node(
             "semantic_cache",
             semantic_cache_node
@@ -119,7 +121,7 @@ class RagAiGraph:
             "semantic_cache",
             semantic_cache_router,
             {
-                "planner": "planner",
+                "miss": "route_after_cache",
                 "end": END,
             },
         )
@@ -131,6 +133,14 @@ class RagAiGraph:
                 "tool_router": "tool_router",
                 "generate_answer": "generate_answer",
             },
+        )
+        workflow.add_conditional_edges(
+            "route_after_cache",
+            lambda s: s["route_decision"],            
+            {
+                "direct_generate": "generate_answer", 
+                "plan_tools": "planner",           
+            }
         )
 
         # workflow.add_conditional_edges(
