@@ -1,9 +1,6 @@
 # store
-
 # Embedding(question)
 # Answer
-
-
 # services/semantic_cache_service.py
 
 import time
