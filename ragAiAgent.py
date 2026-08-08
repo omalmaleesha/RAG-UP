@@ -152,39 +152,42 @@ class RagAiGraph:
 
     def run(self):
         user_input = ""
+
         while user_input.lower() not in ["exit", "quit"]:
-
-            user_input = input("You: ")
-
+            user_input = input("RAG UP CLI:")
             if user_input.lower() in ["exit", "quit"]:
                 break
 
-            start = time.perf_counter()
-
-            result = self.graph.invoke(
-                {
-                    "messages": [],
-                    "user_query": user_input,
-                    "conversation_memory": None,
-                    "cache_hit": False,
-                    "cached_answer": None,
-                    "retrieved_docs": [],
-                    "selected_tool": None,
-                    "tool_results": {},
-                    "planner_reasoning": None,
-                    "enough_information": False,
-                    "final_answer": None,
-                    "reflection_passed": False,
-                    "metrics": {},
-                    "total_time": 0,
-                    "llm_calls": 0,
-                }
-            )
-
-            result["total_time"] = time.perf_counter() - start
+            result = self.process_query(user_input)
             print("\nAI:", result["final_answer"])
             PerformanceReporter.print(result)
 
+    def process_query(self, user_input: str):
+        start = time.perf_counter()
+
+        result = self.graph.invoke(
+            {
+                "messages": [],
+                "user_query": user_input,
+                "conversation_memory": None,
+                "cache_hit": False,
+                "cached_answer": None,
+                "retrieved_docs": [],
+                "selected_tool": None,
+                "tool_results": {},
+                "planner_reasoning": None,
+                "enough_information": False,
+                "final_answer": None,
+                "reflection_passed": False,
+                "metrics": {},
+                "total_time": 0,
+                "llm_calls": 0,
+            }
+        )
+
+        result["total_time"] = time.perf_counter() - start
+
+        return result
 
 
 class PerformanceReporter:

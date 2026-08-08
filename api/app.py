@@ -1,7 +1,15 @@
 from fastapi import FastAPI
-from schemas import ChatRequest
+from api.schemas import ChatRequest
 
 app = FastAPI()
+
+agent = None
+
+
+def set_agent(graph):
+    global agent
+    agent = graph
+
 
 @app.get("/")
 def read_root():
@@ -10,11 +18,15 @@ def read_root():
 
 @app.post("/chat")
 async def chat(request: ChatRequest):
-    query = request.query
 
-    # Later:
-    # result = await run_agent(query, request.user_id)
+    if agent is None:
+        return {"error": "Agent is not initialized"}
+
+    result = agent.process_query(request.query)
 
     return {
-        "answer": f"Received: {query}"
+        "answer": result["final_answer"],
+        "total_time": result["total_time"],
+        "llm_calls": result["llm_calls"],
+        "cache_hit": result["cache_hit"]
     }

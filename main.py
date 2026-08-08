@@ -1,4 +1,7 @@
 import os
+import threading
+
+import uvicorn
 from ragAiAgent import RagAiGraph
 from nodes.memory import ConversationMemoryNode
 from nodes.semantic_cache import SemanticCacheNode
@@ -15,6 +18,8 @@ from services.embeddings import EmbeddingService
 from services.semantic_cache import SemanticCacheService
 from services.vectorstore import VectorStoreService
 from services.llm import LLMService
+from api.app import app
+from api.app import app, set_agent
 
 llm = LLMService().get_llm()
 
@@ -46,6 +51,7 @@ cache_writer_node = CacheWriterNode(
 
 
 def main():
+
     graph = RagAiGraph(
     conversation_memory_node,
     semantic_cache_node,
@@ -56,8 +62,23 @@ def main():
     cache_writer_node,
     route_after_cache
     )
+    set_agent(graph)
+    api_thread = threading.Thread(
+        target=start_api,
+        daemon=True
+    )
+    api_thread.start()
     graph.run()
 
+
+def start_api():
+    uvicorn.run(
+        app,
+        host="127.0.0.1",
+        port=8000,
+        reload=False
+    )
+    print("Starting API server")
 
 if __name__ == "__main__":
     main()
