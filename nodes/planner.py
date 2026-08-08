@@ -7,6 +7,8 @@
 
 
 # planner_schema.py
+import time
+
 from pydantic import BaseModel
 from typing import Literal, Dict
 
@@ -17,22 +19,26 @@ from ragAiAgent import RagAiAgentState
 
 class PlannerOutput(BaseModel):
     enough_information: bool
-    selected_tool: Literal["rag", "none"]
-
+    selected_tool: Literal["rag", "calendar","none"]
 
 PLANNER_PROMPT = """
 You are a routing agent.
 
+Choose exactly one tool.
+
+Tools:
+- rag -> General university questions, policies, fees, admissions.
+- calendar -> Dates, exams, registrations, academic schedules.
+
 Rules:
-- If there is already retrieved information, choose:
+- If has_documents OR has_tool_results is true:
   enough_information=true
   selected_tool="none"
 
-- Otherwise choose:
-  enough_information=false
-  selected_tool="rag"
+- Otherwise:
+  Select the best tool based only on the user's question.
 
-Return only the structured output.
+Return only structured output.
 """
 
 
@@ -44,17 +50,12 @@ class PlannerNode:
             ChatPromptTemplate.from_messages(
                 [
                     ("system", PLANNER_PROMPT),
-                    (
-                        "human",
+                    ("human",
                         """
-                        Question:
-                        {question}
+                        Question: {question}
 
-                        Has Retrieved Documents:
-                        {has_documents}
-
-                        Has Tool Results:
-                        {has_tool_results}
+                        Has Documents: {has_documents}
+                        Has Tool Results: {has_tool_results}
                         """
                     )
                 ]
@@ -63,6 +64,7 @@ class PlannerNode:
         )
 
     def __call__(self, state: RagAiAgentState) -> Dict:
+        start = time.perf_counter()
 
         print(">>> PlannerNode")
 
@@ -73,8 +75,13 @@ class PlannerNode:
                 "has_tool_results": len(state["tool_results"]) > 0,
             }
         )
+        elapsed = time.perf_counter() - start
+        metrics = state.get("metrics", {})
+        metrics["planner"] = elapsed
+
 
         return {
             "selected_tool": result.selected_tool,
             "enough_information": result.enough_information,
+            "metrics": metrics
         }

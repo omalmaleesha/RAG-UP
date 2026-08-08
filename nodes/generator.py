@@ -6,22 +6,21 @@
 #using these generate the answer
 
 ANSWER_PROMPT = """
-You are a University AI Assistant.
+You answer university questions.
 
-Answer ONLY from the provided context.
+Use ONLY this context.
 
-If the answer is not in the context, reply:
-"I couldn't find that information."
-
-Context:
 {context}
 
 Question:
 {question}
+
+If the answer is missing, say:
+"I couldn't find that information."
 """
 
+import time
 from typing import Dict
-
 from langchain_core.prompts import ChatPromptTemplate
 from ragAiAgent import RagAiAgentState
 
@@ -29,28 +28,46 @@ from ragAiAgent import RagAiAgentState
 class GenerateAnswerNode:
 
     def __init__(self, llm):
-
         self.chain = (
             ChatPromptTemplate.from_template(ANSWER_PROMPT)
             | llm
         )
 
     def __call__(self, state: RagAiAgentState) -> Dict:
-
+        start = time.perf_counter()
         print(">>> GenerateAnswerNode")
 
-        documents = "\n\n".join(
-            doc.page_content[:600]
-            for doc in state["retrieved_docs"][:3]
-        )
+        context_parts = []
+
+        # RAG
+        if state["retrieved_docs"]:
+            context_parts.append(
+                "\n".join(
+                    doc.page_content[:400]
+                    for doc in state["retrieved_docs"][:2]
+                )
+            )
+
+        # Other tools
+        if state["tool_results"]:
+            context_parts.append(str(state["tool_results"]))
+
+        context = "\n\n".join(context_parts)
 
         response = self.chain.invoke(
             {
                 "question": state["user_query"],
-                "context": documents
+                "context": context
             }
         )
+        elapsed = time.perf_counter() - start
+
+        metrics = state.get("metrics", {})
+        metrics["generate_answer"] = elapsed
+
+        print(state["tool_results"])
 
         return {
-            "final_answer": response.content
+            "final_answer": response.content,
+            "metrics": metrics
         }
