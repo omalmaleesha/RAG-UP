@@ -21,7 +21,6 @@ If the answer is missing, say:
 
 import time
 from typing import Dict
-
 from langchain_core.prompts import ChatPromptTemplate
 from ragAiAgent import RagAiAgentState
 
@@ -29,7 +28,6 @@ from ragAiAgent import RagAiAgentState
 class GenerateAnswerNode:
 
     def __init__(self, llm):
-
         self.chain = (
             ChatPromptTemplate.from_template(ANSWER_PROMPT)
             | llm
@@ -37,7 +35,6 @@ class GenerateAnswerNode:
 
     def __call__(self, state: RagAiAgentState) -> Dict:
         start = time.perf_counter()
-
         print(">>> GenerateAnswerNode")
 
         context_parts = []

@@ -66,22 +66,16 @@
 
 from typing import Dict
 import time
-
 from ragAiAgent import RagAiAgentState
 
 
 class ReflectionNode:
 
     def __call__(self, state: RagAiAgentState) -> Dict:
-
         start = time.perf_counter()
-
         print(">>> ReflectionNode")
-
         answer = state["final_answer"]
-
         score = 100
-
         if "I couldn't find" in answer:
             score = 40
 

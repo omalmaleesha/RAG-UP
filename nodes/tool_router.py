@@ -3,7 +3,6 @@
 
 from abc import ABC, abstractmethod
 from typing import Dict
-
 from ragAiAgent import RagAiAgentState
 
 
@@ -28,9 +27,7 @@ class ToolRouterNode:
         self.tools = tools
 
     def __call__(self, state: RagAiAgentState) -> Dict:
-
         selected_tool = state["selected_tool"]
-
         if selected_tool is None:
             raise ValueError("Planner did not select a tool.")
 

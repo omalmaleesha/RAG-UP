@@ -28,7 +28,6 @@ class RagAiAgentState(TypedDict):
 
 
 def semantic_cache_router(state: RagAiAgentState):
-
     if state["cache_hit"]:
         return "end"
 
@@ -36,7 +35,6 @@ def semantic_cache_router(state: RagAiAgentState):
 
 
 def planner_router(state: RagAiAgentState):
-
     if state["enough_information"]:
         return "generate_answer"
 
@@ -53,7 +51,6 @@ def reflection_router(state: RagAiAgentState):
 
 
 class RagAiGraph:
-
     def __init__(
         self,
         conversation_memory_node,
@@ -116,7 +113,6 @@ class RagAiGraph:
             "cache_writer",
             END
         )
-
         workflow.add_conditional_edges(
             "semantic_cache",
             semantic_cache_router,
@@ -125,7 +121,6 @@ class RagAiGraph:
                 "end": END,
             },
         )
-
         workflow.add_conditional_edges(
             "planner",
             planner_router,
@@ -157,7 +152,6 @@ class RagAiGraph:
 
     def run(self):
         user_input = ""
-
         while user_input.lower() not in ["exit", "quit"]:
 
             user_input = input("You: ")
@@ -188,15 +182,12 @@ class RagAiGraph:
             )
 
             result["total_time"] = time.perf_counter() - start
-
             print("\nAI:", result["final_answer"])
-
             PerformanceReporter.print(result)
 
 
 
 class PerformanceReporter:
-
     @staticmethod
     def print(result):
 

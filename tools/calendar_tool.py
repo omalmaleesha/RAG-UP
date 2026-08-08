@@ -8,21 +8,15 @@ class CalendarTool:
         self.calendar_service = calendar_service
 
     def invoke(self, state: RagAiAgentState) -> Dict:
-
         query = state["user_query"].lower()
         words = query.split()
-
         results = []
-
         for event in self.calendar_service.get_events():
-
             title = event["title"]
-
             score = fuzz.partial_ratio(
                 query.lower(),
                 title.lower()
             )
-
             if score > 70:
                 results.append(event)
 

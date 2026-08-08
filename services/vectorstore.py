@@ -2,9 +2,7 @@
 
 import os
 from dotenv import load_dotenv
-
 from langchain_chroma import Chroma
-
 from services.embeddings import EmbeddingService
 
 load_dotenv()
@@ -13,7 +11,6 @@ load_dotenv()
 class VectorStoreService:
 
     def __init__(self):
-
         self.db = Chroma(
             persist_directory=os.getenv("VECTOR_DB"),
             embedding_function=EmbeddingService().get_embedding(),

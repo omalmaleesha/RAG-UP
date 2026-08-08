@@ -1,6 +1,4 @@
 import json
-
-
 class CalendarService:
 
     def __init__(self):
