@@ -65,7 +65,29 @@ class GenerateAnswerNode:
         metrics = state.get("metrics", {})
         metrics["generate_answer"] = elapsed
 
-        print(state["tool_results"])
+        #print(state["tool_results"])
+
+        # -----------------------------
+        # TOKEN USAGE
+        # -----------------------------
+        print("\n--- LLM USAGE ---")
+
+        # print("Response metadata:")
+        # print(response.response_metadata)
+
+        usage = getattr(response, "usage_metadata", None)
+
+        if usage:
+            input_tokens = usage.get("input_tokens", 0)
+            output_tokens = usage.get("output_tokens", 0)
+            total_tokens = usage.get("total_tokens", 0)
+
+            print("Input tokens:", input_tokens)
+            print("Output tokens:", output_tokens)
+            print("Total tokens:", total_tokens)
+
+        else:
+            print("Token usage not available")
 
         return {
             "final_answer": response.content,
