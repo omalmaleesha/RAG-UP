@@ -61,3 +61,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# to run the fast api - uv run fastapi dev api/app.py
