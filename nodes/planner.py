@@ -8,14 +8,10 @@
 
 # planner_schema.py
 import time
-
 from pydantic import BaseModel
 from typing import Literal, Dict
-
 from langchain_core.prompts import ChatPromptTemplate
-
 from ragAiAgent import RagAiAgentState
-
 
 class PlannerOutput(BaseModel):
     enough_information: bool

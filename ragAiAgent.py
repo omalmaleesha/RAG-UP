@@ -146,21 +146,25 @@ class RagAiGraph:
         #         "cache_writer": "cache_writer",
         #     },
         # )
+        workflow.add_conditional_edges(
+            "reflection",
+            reflection_router,
+            {
+                "cache_writer": "cache_writer",
+            },
+        )
 
         self.graph = workflow.compile()
 
 
     def run(self):
-        user_input = ""
 
-        while user_input.lower() not in ["exit", "quit"]:
-            user_input = input("RAG UP CLI:")
+        while True:
+            user_input = input("RAG UP CLI: ")
             if user_input.lower() in ["exit", "quit"]:
                 break
-
             result = self.process_query(user_input)
-            print("\nAI:", result["final_answer"])
-            PerformanceReporter.print(result)
+           
 
     def process_query(self, user_input: str):
         start = time.perf_counter()
@@ -184,6 +188,8 @@ class RagAiGraph:
                 "llm_calls": 0,
             }
         )
+        print("\nAI:", result.get("final_answer"))
+        PerformanceReporter.print(result)
 
         result["total_time"] = time.perf_counter() - start
 
@@ -195,14 +201,11 @@ class PerformanceReporter:
     def print(result):
 
         print("\n================ PERFORMANCE ================")
-
         print(f"Cache Hit : {result['cache_hit']}")
         print(f"Tool      : {result['selected_tool']}")
-
         print()
 
         for node, t in result["metrics"].items():
-
             print(f"{node:25} {t:.3f}s")
 
         print("--------------------------------------------")

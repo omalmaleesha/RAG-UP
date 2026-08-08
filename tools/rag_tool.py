@@ -1,13 +1,10 @@
 # The RAG Tool only retrieves information. It never generates an answer.
-
 # tools/rag_tool.py
 # this is an normal rag not yet connected the original RAG AI chatbot in My old project
 
 from typing import Dict
-
 from ragAiAgent import RagAiAgentState
 from services.vectorstore import VectorStoreService
-
 
 class RagTool:
 
