@@ -20,11 +20,13 @@ class CalendarTool:
             if score > 70:
                 results.append(event)
 
+        print(">>>CALENDAR TOOL USED")
         print(state["user_query"])
         print(results)
 
         return {
             "tool_results": {
                 "calendar": results
-            }
+            },
+            "selected_tool": "calendar"
         }
