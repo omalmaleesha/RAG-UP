@@ -27,7 +27,12 @@ class ConversationMemoryNode:
 
         elapsed = time.perf_counter() - start
         metrics = state.get("metrics", {})
+        metrics["conversation_memory"] = elapsed
+        total_time = state.get("total_time", 0)
+        total_time += elapsed
+
         return {
             "conversation_memory": memory,
-            "metrics": metrics
+            "metrics": metrics,
+            "total_time": total_time
         }

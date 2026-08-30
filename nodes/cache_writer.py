@@ -55,7 +55,10 @@ class CacheWriterNode:
         elapsed = time.perf_counter() - start
         metrics = state.get("metrics", {})
         metrics["cache_writer"] = elapsed
+        total_time = state.get("total_time", 0)
+        total_time += elapsed
 
         return {
-            "metrics": metrics
+            "metrics": metrics,
+            "total_time": total_time
         }

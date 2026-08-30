@@ -40,11 +40,14 @@ class SemanticCacheNode:
             elapsed = time.perf_counter() - start
             metrics = state.get("metrics", {})
             metrics["semantic_cache"] = elapsed
+            total_time = state.get("total_time", 0)
+            total_time += elapsed
 
             return {
                 "cache_hit": False,
                 "cached_answer": None,
-                "metrics": metrics
+                "metrics": metrics,
+                "total_time": total_time
             }
 
         best_match = cache_result[0]
@@ -58,21 +61,26 @@ class SemanticCacheNode:
             elapsed = time.perf_counter() - start
             metrics = state.get("metrics", {})
             metrics["semantic_cache"] = elapsed
+            total_time = state.get("total_time", 0)
+            total_time += elapsed
 
             return {
                 "cache_hit": True,
                 "cached_answer": best_match["answer"],
                 "final_answer": best_match["answer"],
-                "metrics": metrics
+                "metrics": metrics,
+                "total_time": total_time
             }
 
         elapsed = time.perf_counter() - start
         metrics = state.get("metrics", {})
         metrics["semantic_cache"] = elapsed
-        
+        total_time = state.get("total_time", 0)
+        total_time += elapsed
 
         return {
             "cache_hit": False,
             "cached_answer": None,
-            "metrics": metrics
+            "metrics": metrics,
+            "total_time": total_time
         }
