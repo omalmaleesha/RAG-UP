@@ -60,10 +60,15 @@ class GenerateAnswerNode:
                 "context": context
             }
         )
+        
+        llm_calls = state.get("llm_calls", 0)
+        llm_calls += 1
+        
         elapsed = time.perf_counter() - start
-
         metrics = state.get("metrics", {})
         metrics["generate_answer"] = elapsed
+        total_time = state.get("total_time", 0)
+        total_time += elapsed
 
         #print(state["tool_results"])
 
@@ -91,5 +96,7 @@ class GenerateAnswerNode:
 
         return {
             "final_answer": response.content,
-            "metrics": metrics
+            "metrics": metrics,
+            "total_time": total_time,
+            "llm_calls": llm_calls
         }

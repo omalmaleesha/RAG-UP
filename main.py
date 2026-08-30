@@ -84,4 +84,6 @@ if __name__ == "__main__":
     main()
 
 
-# to run the fast api - uv run fastapi dev api/app.py
+# to run the fast api - uv run fastapi dev api/app.py  -
+# DIDINT RU AIAGENT TO RUN AIAGENT ALSO - uv run python main.py
+# python -c "from metrics.performance_reporter import PerformanceReporter; PerformanceReporter().txt_to_pdf()"

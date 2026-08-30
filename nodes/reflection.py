@@ -83,9 +83,12 @@ class ReflectionNode:
 
         metrics = state.get("metrics", {})
         metrics["reflection"] = elapsed
+        total_time = state.get("total_time", 0)
+        total_time += elapsed
 
         return {
             "reflection_passed": True,
             "answer_score": score,
-            "metrics": metrics
+            "metrics": metrics,
+            "total_time": total_time
         }

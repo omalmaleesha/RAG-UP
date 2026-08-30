@@ -5,6 +5,8 @@ from langchain_core.messages import BaseMessage
 from langgraph.graph.message import add_messages
 from langgraph.graph import StateGraph, END
 
+from metrics.performance_reporter import PerformanceReporter
+
 
 class RagAiAgentState(TypedDict):
     messages: Annotated[List[BaseMessage], add_messages]
@@ -25,6 +27,7 @@ class RagAiAgentState(TypedDict):
     total_time: float
     llm_calls: int
     cache_hit: bool
+    
 
 
 def semantic_cache_router(state: RagAiAgentState):
@@ -189,24 +192,28 @@ class RagAiGraph:
             }
         )
         print("\nAI:", result.get("final_answer"))
+        # Print to terminal
         PerformanceReporter.print(result)
+
+        # Write to metrics/test_metrics.txt
+        PerformanceReporter.write(result)
 
         result["total_time"] = time.perf_counter() - start
 
         return result
 
 
-class PerformanceReporter:
-    @staticmethod
-    def print(result):
+# class PerformanceReporter:
+#     @staticmethod
+#     def print(result):
 
-        print("\n================ PERFORMANCE ================")
-        print(f"Cache Hit : {result['cache_hit']}")
-        print(f"Tool      : {result['selected_tool']}")
-        print()
+#         print("\n================ PERFORMANCE ================")
+#         print(f"Cache Hit : {result['cache_hit']}")
+#         print(f"Tool      : {result['selected_tool']}")
+#         print()
 
-        for node, t in result["metrics"].items():
-            print(f"{node:25} {t:.3f}s")
+#         for node, t in result["metrics"].items():
+#             print(f"{node:25} {t:.3f}s")
 
-        print("--------------------------------------------")
-        print(f"Total : {result['total_time']:.3f}s")
+#         print("--------------------------------------------")
+#         print(f"Total : {result['total_time']:.3f}s")

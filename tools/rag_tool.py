@@ -12,6 +12,7 @@ class RagTool:
         self.vector_store = vector_store
 
     def invoke(self, state: RagAiAgentState) -> Dict:
+        print(">>>RAG TOOL USED")
         query = state["user_query"]
         documents = self.vector_store.similarity_search(
             query=query,
@@ -23,6 +24,7 @@ class RagTool:
             "tool_results": {
                 **state["tool_results"],
                 "rag": documents
-            }
+            },
+            "selected_tool": "rag"
 
         }

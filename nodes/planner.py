@@ -74,10 +74,13 @@ class PlannerNode:
         elapsed = time.perf_counter() - start
         metrics = state.get("metrics", {})
         metrics["planner"] = elapsed
+        total_time = state.get("total_time", 0)
+        total_time += elapsed
 
 
         return {
             "selected_tool": result.selected_tool,
             "enough_information": result.enough_information,
-            "metrics": metrics
+            "metrics": metrics,
+            "total_time": total_time
         }

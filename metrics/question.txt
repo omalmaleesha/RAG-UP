@@ -1,0 +1,6 @@
+Category A — Simple factual  What is the minimum GPA required for undergraduate admission?  
+Category B — Retrieval       Whatoptions and stipends are available for Graduate Research and Teaching Assistantships?  
+Category C — Complex         If an out-of-state undergraduate student receives a Presidential Excellence Merit Scholarship 
+covering full tuition,what estimated total cost remain for housing, dining, and fees?  
+Category D — Non-RAG/tool    What events or classes are scheduled for tomorrow?  
+Category E — Out-of-domain   What is the exchange rate between the USD and EUR today?

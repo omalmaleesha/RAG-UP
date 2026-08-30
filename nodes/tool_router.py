@@ -1,6 +1,5 @@
 # Execute whatever tool planner selected.
 
-
 from abc import ABC, abstractmethod
 from typing import Dict
 from ragAiAgent import RagAiAgentState

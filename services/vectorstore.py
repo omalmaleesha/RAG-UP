@@ -24,3 +24,21 @@ class VectorStoreService:
 
     def reset(self):
         self.db.reset_collection()
+        
+        
+    def has_documents(self):
+        """
+        Check whether the vector database contains any documents.
+        Returns True if documents exist, otherwise False.
+        """
+        data = self.db.get()
+        count = len(data.get("ids", []))
+        has_docs = count > 0
+
+        print(f"Vector DB document count: {count}")
+        print(f"Vector DB has documents: {has_docs}")
+
+        return has_docs
+    
+    
+# $ python -c "from services.vectorstore import VectorStoreService; VectorStoreService().has_documents()"

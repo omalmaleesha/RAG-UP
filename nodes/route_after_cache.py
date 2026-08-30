@@ -50,8 +50,11 @@ def route_after_cache(state: RagAiAgentState) -> Dict:
     elapsed = time.perf_counter() - start
     metrics = state.get("metrics", {})
     metrics["route_after_cache"] = elapsed
+    total_time = state.get("total_time", 0)
+    total_time += elapsed
 
     return {
         "route_decision": decision,
-        "metrics": metrics
+        "metrics": metrics,
+        "total_time": total_time
     }

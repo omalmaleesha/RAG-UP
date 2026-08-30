@@ -16,5 +16,5 @@ class LLMService:
         )
 
     def get_llm(self):
-
+        print(">>>LLM SERVICE USED")
         return self.llm
