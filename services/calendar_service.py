@@ -6,4 +6,5 @@ class CalendarService:
             self.events = json.load(f)
 
     def get_events(self):
+        print(">>>CALENDAR SERVICE USED")
         return self.events
