@@ -6,7 +6,7 @@ An agentic Retrieval-Augmented Generation system that answers university questio
 
 New Optimizations:
 solution 1 - optimized vector store 
-![Vector DB Storage Architecture](img\vectorDBOpt.png)
+![Vector DB Storage Architecture](img/vectorDBOpt.png)
 
 > Predecessor: [HelpDesk RAG Chatbot](https://github.com/omalmaleesha/HelpDesk-RAG-Chatbot)
 
