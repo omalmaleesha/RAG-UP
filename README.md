@@ -1,8 +1,12 @@
-# RAG-UP — Re-Engineered Agentic University RAG System (LangGraph)
+# RAG-UP Re-Engineered Agentic University RAG System (LangGraph)
 
 **From Traditional RAG → Agentic RAG**
 
-An agentic Retrieval-Augmented Generation system that answers university questions with **planning, tools, semantic caching, and measured performance** — not a single retrieve-then-generate pipeline.
+An agentic Retrieval-Augmented Generation system that answers university questions with **planning, tools, semantic caching, and measured performance**  not a single retrieve-then-generate pipeline.
+
+New Optimizations:
+solution 1 - optimized vector store 
+![Vector DB Storage Architecture](img\vectorDBOpt.png)
 
 > Predecessor: [HelpDesk RAG Chatbot](https://github.com/omalmaleesha/HelpDesk-RAG-Chatbot)
 
@@ -42,7 +46,7 @@ An agentic Retrieval-Augmented Generation system that answers university questio
 
 RAG-UP is a **decision-driven AI agent** for university help-desk style questions (admissions, fees, policies, campus facts, academic calendar).
 
-A traditional RAG chatbot treated every question the same: retrieve documents, send them to an LLM, generate an answer. That works, but it wastes retrieval, tokens, and latency on questions the system has already answered — and it has no way to choose a specialized tool (for example, calendar lookup vs. document search).
+A traditional RAG chatbot treated every question the same: retrieve documents, send them to an LLM, generate an answer. That works, but it wastes retrieval, tokens, and latency on questions the system has already answered  and it has no way to choose a specialized tool (for example, calendar lookup vs. document search).
 
 RAG-UP rebuilds that pipeline as a **LangGraph state machine**. The graph decides when to reuse a cached answer, when to skip tools, which tool to call, and when to persist a new Q&A pair. The agent is exposed as a **FastAPI** service and a **CLI**, with per-request timing and LLM-call counts.
 
@@ -64,7 +68,7 @@ The original HelpDesk RAG chatbot followed:
 User question → Retrieval → Context → LLM → Answer
 ```
 
-That flow is easy to build and expensive to run at scale.
+That flow is easy to build and expensive to run at scale and can't run in production
 
 ---
 
@@ -102,41 +106,6 @@ The system still uses RAG for university documents (PDF → chunk → Chroma). I
 ## Architecture
 
 High-level component interaction:
-
-```mermaid
-flowchart LR
-  U[User] --> CLI[CLI]
-  U --> API[FastAPI POST /chat]
-  CLI --> G[LangGraph agent]
-  API --> G
-
-  subgraph graph [Agent graph]
-    M[Conversation memory]
-    C[Semantic cache]
-    R[Route after cache]
-    P[Planner]
-    T[Tool router]
-    GEN[Generate answer]
-    REF[Reflection]
-    W[Cache writer]
-    M --> C
-    C -->|hit| END1[Return cached answer]
-    C -->|miss| R
-    R -->|direct_generate| GEN
-    R -->|plan_tools| P
-    P -->|need tool| T
-    T --> P
-    P -->|enough info| GEN
-    GEN --> REF --> W --> END2[Response]
-  end
-
-  T --> RAG[Chroma vector DB]
-  T --> CAL[calendar.json + RapidFuzz]
-  W --> CACHE[(Semantic cache Chroma)]
-  C --> CACHE
-  GEN --> LLM[Groq ChatGroq]
-  P --> LLM
-```
 
 [Architecture diagram (Google Drive)](https://drive.google.com/file/d/1ygrwyNLfEe8DEXNxah683_hUkgDuhNTH/view?usp=sharing)
 
